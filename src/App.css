@@ -1,0 +1,104 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.pointer {
+  cursor: pointer;
+}
+
+.blink {
+  color: #fff;
+		display: inline-block;
+		animation: blinkingBackground 2s infinite;
+}
+
+@keyframes blinkingBackground{
+  0%		{ background-color: #4768DE;}
+  25%		{ background-color: #1056c0;}
+  50%		{ background-color: #4768DE;}
+  75%		{ background-color: #EBFE00;}
+  100%	        { background-color: #4768DE;}
+}
+
+.box-shadow {
+  -webkit-box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.75);
+box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.75);
+}
+
+.scroll-parent {
+  position: relative;
+  /* width: 50vw; */
+  height: 10rem;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.scroll-element {
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  left: 0%;
+  top: 0%;
+  animation: primary 10s linear infinite;
+}
+
+.primary {
+  animation: primary 10s linear infinite;
+}
+
+.secondary {
+  animation: secondary 10s linear infinite;
+}
+
+@keyframes primary {
+  from {
+    left: 0%;
+  }
+  to {
+    left: -100%;
+  }
+}
+
+@keyframes secondary {
+  from {
+    left: 100%;
+  }
+  to {
+    left: 0%;
+  }
+}
