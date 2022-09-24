@@ -1,7 +1,7 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import { localTheme } from "../../theme";
 
-export default function LeftComponent() {
+export default function LeftComponent(props) {
   return (
     <Grid item xs={12} md={6}>
       <Stack direction={"row"} justifyContent={"center"}>
@@ -35,6 +35,11 @@ export default function LeftComponent() {
                 padding: 10,
               }}
               variant="contained"
+              onClick={() => {
+                props.reference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
             >
               Buy Personal FASTag
             </Button>

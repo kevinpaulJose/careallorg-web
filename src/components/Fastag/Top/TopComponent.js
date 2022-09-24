@@ -2,7 +2,7 @@ import { Grid, Stack } from "@mui/material";
 
 import LeftComponent from "./LeftComponent";
 
-export default function TopComponent() {
+export default function TopComponent(props) {
   return (
     <>
       <Grid
@@ -12,7 +12,7 @@ export default function TopComponent() {
         spacing={10}
         mt={0}
       >
-        <LeftComponent />
+        <LeftComponent reference={props.reference} />
         <Grid item xs={12} md={6}>
           <Stack direction={"row"} justifyContent={"center"}>
             <img
