@@ -53,6 +53,11 @@ export default function LeftComponent(props) {
                 fontSize: 18,
                 padding: 10,
               }}
+              onClick={() => {
+                props.serviceReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
               variant="outlined"
             >
               See Other Products

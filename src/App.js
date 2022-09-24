@@ -1,6 +1,4 @@
 import "./App.css";
-// import Footer from "./components/Footer/Footer";
-import NavBar from "./components/Navbar/NavBar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createContext, Suspense, useEffect, useState } from "react";
 import Home from "./components/Home";
@@ -20,7 +18,6 @@ function App() {
   return (
     <AppContext.Provider value={{ width }}>
       <Router>
-        <NavBar />
         <Suspense fallback={<div>loading</div>}>
           <Routes>
             <Route path={"/"} element={<Home />} />

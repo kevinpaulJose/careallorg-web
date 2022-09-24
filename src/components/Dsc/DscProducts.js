@@ -1,39 +1,55 @@
 import { Grid, Stack, Typography } from "@mui/material";
 import { useContext } from "react";
-import { AppContext } from "../../../App";
-// import JumbotronImg from "../../Shared/JumbotronImg";
-import { localTheme } from "../../theme";
+import { AppContext } from "../../App";
+import { localTheme } from "../theme";
 import NewProduct from "./NewProduct";
 import ReplacementProduct from "./ReplacementProduct";
 
-export default function FastagProducts() {
+export default function DscProducts() {
   const { width } = useContext(AppContext);
   return (
     <>
       <Grid container justifyContent={"center"} mt={5}>
         <Grid item xs={10}>
-          <Grid container direction={"row"}>
+          {width > 950 ? (
+            <Typography
+              variant="h4"
+              fontWeight={"bold"}
+              color={localTheme.darkBg}
+            >
+              {` Digital Signature (DSC) Services`}
+            </Typography>
+          ) : (
+            <Typography
+              variant="h5"
+              fontWeight={"bold"}
+              color={localTheme.darkBg}
+            >
+              {` Digital Signature (DSC) Services`}
+            </Typography>
+          )}
+          <Grid container direction={"row"} mt={3}>
             <Grid item xs={12} lg={6}>
               <Stack spacing={2}>
-                <Typography
+                {/* <Typography
                   variant="h5"
                   color={localTheme.darkBg}
                   fontWeight={"bold"}
                 >
-                  Buy FASTag
-                </Typography>
+                  {`Digital Signature (Individual)`}
+                </Typography> */}
                 <NewProduct />
               </Stack>
             </Grid>
             <Grid item xs={12} lg={6}>
               <Stack spacing={2} mt={width <= 1200 && 7}>
-                <Typography
+                {/* <Typography
                   variant="h5"
                   color={localTheme.darkBg}
                   fontWeight={"bold"}
                 >
-                  FASTag Replacement
-                </Typography>
+                  {`Digital Signature (Organization)`}
+                </Typography> */}
                 <ReplacementProduct />
               </Stack>
             </Grid>

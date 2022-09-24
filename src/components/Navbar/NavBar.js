@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import LengthyItem from "./LenthyItem/LengthyItem";
 import BankModal from "./shared/BankModal";
 import SmallItem from "./SmallItem/SmallItem";
-export default function NavBar() {
+export default function NavBar(props) {
   const [width, setWidth] = useState(window.innerWidth);
   const [expanded, setExpanded] = useState(false);
   const [bank, setBank] = useState(false);
@@ -38,6 +38,8 @@ export default function NavBar() {
             handleBank={handleBank}
             selected={selected}
             handleSelect={handleSelect}
+            panReference={props.panReference}
+            reference={props.reference}
           />
         </Box>
       ) : (
@@ -48,6 +50,8 @@ export default function NavBar() {
             handleBank={handleBank}
             selected={selected}
             handleSelect={handleSelect}
+            panReference={props.panReference}
+            reference={props.reference}
           />
         </>
 

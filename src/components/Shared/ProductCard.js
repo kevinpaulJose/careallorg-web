@@ -9,25 +9,28 @@ export default function ProductCard(props) {
   return (
     <Card
       sx={{
-        height: 350,
+        height: props.customHeight ? props.customHeight : 350,
       }}
     >
       <CardContent>
         <Stack direction={"row"} justifyContent={"center"}>
-          <img src={props.img} width={70} alt={"product"} />
+          {props.img && <img src={props.img} width={70} alt={"product"} />}
         </Stack>
-        {props.contents.map((v, _) => (
-          <Typography
-            textAlign={"center"}
-            mt={1}
-            variant={"h6"}
-            fontWeight={"bold"}
-            color={localTheme.darkBg}
-            key={v}
-          >
-            {v}
-          </Typography>
-        ))}
+        <div style={{ marginTop: 10 }}>
+          {props.contents.map((v, _) => (
+            <Typography
+              textAlign={"center"}
+              mt={0}
+              variant={"h6"}
+              fontWeight={"bold"}
+              color={localTheme.darkBg}
+              key={v}
+            >
+              {v}
+            </Typography>
+          ))}
+        </div>
+
         <Stack direction={"row"} justifyContent={"center"}>
           <Typography
             variant="subtitle2"

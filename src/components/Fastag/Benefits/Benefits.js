@@ -1,5 +1,5 @@
 import { Grid, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AppContext } from "../../../App";
 import { localTheme } from "../../theme";
 import InternalCard from "./shared/InternalCard";
