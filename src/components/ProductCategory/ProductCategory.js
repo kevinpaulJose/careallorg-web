@@ -5,7 +5,7 @@ import HistoryEduRoundedIcon from "@mui/icons-material/HistoryEduRounded";
 import LocalCarWashRoundedIcon from "@mui/icons-material/LocalCarWashRounded";
 import { localTheme } from "../theme";
 
-export default function ProductCategory() {
+export default function ProductCategory(props) {
   return (
     <>
       <Grid container justifyContent={"center"}>
@@ -20,16 +20,28 @@ export default function ProductCategory() {
           </Typography>
           <Grid container direction={"row"}>
             <Grid item xs={12} lg={4}>
-              <ProductCategoryCard icon={<PanIcon />} title={"PAN Card"} />
+              <ProductCategoryCard
+                icon={<PanIcon />}
+                title={"PAN Card"}
+                link={"pan"}
+                reference={props.panReference}
+              />
             </Grid>
             <Grid item xs={12} lg={4}>
               <ProductCategoryCard
                 icon={<DigiSig />}
                 title={"Digital Signature"}
+                link="dsc"
+                reference={props.dscReference}
               />
             </Grid>
             <Grid item xs={12} lg={4}>
-              <ProductCategoryCard icon={<FasTag />} title={"FASTag"} />
+              <ProductCategoryCard
+                icon={<FasTag />}
+                title={"FASTag"}
+                link={"fastag"}
+                reference={props.reference}
+              />
             </Grid>
           </Grid>
         </Grid>

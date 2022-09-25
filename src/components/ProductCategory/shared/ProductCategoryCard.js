@@ -15,6 +15,23 @@ export default function ProductCategoryCard(props) {
         justifyContent="center"
         mt={width <= 1200 && 3}
         className="pointer"
+        onClick={() => {
+          if (props.link === "pan") {
+            props.reference.current.scrollIntoView({
+              behavior: "smooth",
+            });
+          }
+          if (props.link === "fastag") {
+            props.reference.current.scrollIntoView({
+              behavior: "smooth",
+            });
+          }
+          if (props.link === "dsc") {
+            props.reference.current.scrollIntoView({
+              behavior: "smooth",
+            });
+          }
+        }}
       >
         <Grid item>
           <Stack>

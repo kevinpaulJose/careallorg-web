@@ -4,6 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import { localTheme } from "../theme";
 import { Stack, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export default function ProductCard(props) {
   return (
@@ -43,20 +44,23 @@ export default function ProductCard(props) {
           </Typography>
         </Stack>
       </CardContent>
-      <CardActions sx={{ justifyContent: "center" }}>
-        {/* <Stack justifyContent={"center"} direction="row"></Stack> */}
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: localTheme.activeColor,
-            textTransform: "none",
-            width: "60%",
-          }}
-          size="medium"
-        >
-          Apply Now
-        </Button>
-      </CardActions>
+      <Link to={`/apply/${props.link}`} style={{ textDecoration: "none" }}>
+        <CardActions sx={{ justifyContent: "center" }}>
+          {/* <Stack justifyContent={"center"} direction="row"></Stack> */}
+
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: localTheme.activeColor,
+              textTransform: "none",
+              width: "60%",
+            }}
+            size="medium"
+          >
+            Apply Now
+          </Button>
+        </CardActions>
+      </Link>
     </Card>
   );
 }

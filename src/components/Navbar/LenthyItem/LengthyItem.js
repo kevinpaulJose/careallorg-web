@@ -16,6 +16,7 @@ export default function LengthyItem(props) {
           <Grid
             item
             onClick={() => {
+              console.log(v.value);
               if (v.value === "pancard") {
                 props.panReference.current.scrollIntoView({
                   behavior: "smooth",
@@ -26,7 +27,16 @@ export default function LengthyItem(props) {
                   behavior: "smooth",
                 });
               }
-
+              if (v.value === "contact") {
+                props.contactReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
+              if (v.value === "dsc") {
+                props.dscReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
               props.handleSelect(v.value);
             }}
           >

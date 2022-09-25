@@ -40,6 +40,8 @@ export default function NavBar(props) {
             handleSelect={handleSelect}
             panReference={props.panReference}
             reference={props.reference}
+            contactReference={props.contactReference}
+            dscReference={props.dscReference}
           />
         </Box>
       ) : (
@@ -52,6 +54,8 @@ export default function NavBar(props) {
             handleSelect={handleSelect}
             panReference={props.panReference}
             reference={props.reference}
+            contactReference={props.contactReference}
+            dscReference={props.dscReference}
           />
         </>
 

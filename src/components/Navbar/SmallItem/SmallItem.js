@@ -30,6 +30,26 @@ export default function SmallItem(props) {
             onClick={() => {
               props.toggleMenu();
               props.handleSelect({ selected: v.value });
+              if (v.value === "pancard") {
+                props.panReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
+              if (v.value === "fastag") {
+                props.reference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
+              if (v.value === "contact") {
+                props.contactReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
+              if (v.value === "dsc") {
+                props.dscReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
             }}
           >
             <Link

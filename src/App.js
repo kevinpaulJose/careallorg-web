@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createContext, Suspense, useEffect, useState } from "react";
 import Home from "./components/Home";
+import Apply from "./components/Apply/Apply";
 
 export const AppContext = createContext(0);
 
@@ -21,9 +22,7 @@ function App() {
         <Suspense fallback={<div>loading</div>}>
           <Routes>
             <Route path={"/"} element={<Home />} />
-            {/* <Route path={"/fastag"} element={<Fastag />} />
-            <Route path={"/contact"} element={<Contact />} />
-            <Route path={"/about"} element={<About />} /> */}
+            <Route path="/apply/:type" element={<Apply />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>
