@@ -7,9 +7,14 @@ export default function FileUploadPage(props) {
   const [isSelected, setIsSelected] = useState(false);
 
   const changeHandler = (event) => {
-    setSelectedFile(event.target.files[0]);
-    setIsSelected(true);
-    console.log(event.target.files[0]);
+    if (event.target.files[0].size > 5000) {
+      props.setError(true);
+    } else {
+      props.setError(false);
+      setSelectedFile(event.target.files[0]);
+      setIsSelected(true);
+      props.file(event.target.files[0]);
+    }
   };
 
   return (
