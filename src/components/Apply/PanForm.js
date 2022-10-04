@@ -1,15 +1,18 @@
 import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../../App";
 import { localTheme } from "../theme";
 import FileUploadPage from "./shared/FileUpload";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { handleUpload } from "../../firebase/functions";
+import { baseURL } from "../../api/baseURL";
+import { postData } from "../../api/calls";
 
-export default function PanForm() {
+export default function PanForm(props) {
   const { width } = useContext(AppContext);
 
-  const [dob, setDob] = useState("2014-08-18T21:11:54");
+  const [dob, setDob] = useState(new Date().toISOString());
 
   const handleChangeDob = (newValue) => {
     setDob(newValue);
@@ -30,6 +33,127 @@ export default function PanForm() {
     },
   ];
 
+  const [panFile, setPanFile] = useState(null);
+  const [aadharFile, setAadharFile] = useState(null);
+  const [adFile, setAdFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const afirstName = useRef(null);
+  const amiddleName = useRef(null);
+  const alastName = useRef(null);
+  const mobileNo = useRef(null);
+  const emailId = useRef(null);
+  const aadhaarNumber = useRef(null);
+  const aadharNumberName = useRef(null);
+
+  const ffirstName = useRef(null);
+  const fmiddleName = useRef(null);
+  const flastName = useRef(null);
+
+  const mfirstName = useRef(null);
+  const mmiddleName = useRef(null);
+  const mlastName = useRef(null);
+
+  const personalDetailsRef = useRef(null);
+
+  const [emailError, setEmailError] = useState(false);
+  const [mobileError, setMobileError] = useState(false);
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [middleNameError, setMiddleNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+
+  const [uploadFileError, setUploadFileError] = useState(false);
+  const [fileSizeError, setFileSizeError] = useState(false);
+
+  const handleSubmit = async () => {
+    const value = {
+      a_firstName: afirstName.current.value,
+      a_lastName: alastName.current.value,
+      a_middleName: amiddleName.current.value,
+
+      m_firstName: mfirstName.current.value,
+      m_lastName: mlastName.current.value,
+      m_middleName: mmiddleName.current.value,
+
+      f_firstName: ffirstName.current.value,
+      f_lastName: flastName.current.value,
+      f_middleName: fmiddleName.current.value,
+
+      a_mobile_no: mobileNo.current.value,
+      email_id: emailId.current.value,
+      aadhar_no: aadhaarNumber.current.value,
+      aadhar_name: aadharNumberName.current.value,
+      dob: dob,
+
+      paid: "0",
+      aadhar_file: aadharFile,
+      pan_file: panFile,
+      address_file: adFile,
+      type: props.props.name,
+      title: currency,
+    };
+    let err = false;
+    if (value.a_firstName.trim() === "" || value.a_firstName.length <= 2) {
+      setFirstNameError(true);
+      err = true;
+    } else {
+      setFirstNameError(false);
+    }
+    if (value.a_lastName.trim() === "" || value.a_lastName.length <= 2) {
+      setLastNameError(true);
+      err = true;
+    } else {
+      setLastNameError(false);
+    }
+    if (
+      value.a_mobile_no.trim() === "" ||
+      value.a_mobile_no.toString().length !== 10
+    ) {
+      err = true;
+      setMobileError(true);
+    } else {
+      setMobileError(false);
+    }
+
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value.email_id)) {
+      setEmailError(true);
+      err = true;
+    } else {
+      setEmailError(false);
+    }
+    if (
+      value.aadhar_file == null ||
+      value.pan_file == null ||
+      value.address_file == null
+    ) {
+      err = true;
+      setUploadFileError(true);
+    } else {
+      setUploadFileError(false);
+    }
+
+    if (err) {
+      console.log("error");
+      console.log(value);
+    } else {
+      console.log("success");
+      setLoading(true);
+      value.aadhar_file = await handleUpload(value.aadhar_file, "aadhaar");
+      value.pan_file = await handleUpload(value.pan_file, "pan");
+      value.address_file = await handleUpload(value.address_file, "address");
+      console.log(value);
+      const response = await postData(value, `${baseURL}/pan`);
+      console.log(response.status);
+      setLoading(false);
+      if (response.status === 200) {
+        alert("Order Placed - " + response.data.order_id);
+        window.location.href = "/";
+      } else {
+        alert("Please try again later");
+      }
+    }
+  };
+
   const [currency, setCurrency] = useState("Mr");
   const handleChange = (event) => {
     setCurrency(event.target.value);
@@ -43,7 +167,7 @@ export default function PanForm() {
       <Grid container justifyContent={"center"} pt={10} pb={10}>
         <Grid item xs={10}>
           <form>
-            <Grid container>
+            <Grid container ref={personalDetailsRef}>
               <Grid item>
                 <Typography
                   color={localTheme.darkBg}
@@ -94,7 +218,13 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  error={firstNameError}
+                  inputRef={afirstName}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
             <Grid
@@ -109,7 +239,13 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  error={middleNameError}
+                  inputRef={amiddleName}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
             <Grid
@@ -124,7 +260,13 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  error={lastNameError}
+                  inputRef={alastName}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
             <Grid
@@ -144,6 +286,8 @@ export default function PanForm() {
                   fullWidth
                   variant="outlined"
                   size="small"
+                  inputRef={mobileNo}
+                  error={mobileError}
                 />
               </Grid>
             </Grid>
@@ -186,6 +330,8 @@ export default function PanForm() {
                   fullWidth
                   variant="outlined"
                   size="small"
+                  inputRef={emailId}
+                  error={emailError}
                 />
               </Grid>
             </Grid>
@@ -201,7 +347,12 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  inputRef={aadhaarNumber}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
 
@@ -217,7 +368,12 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  inputRef={aadharNumberName}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
 
@@ -244,7 +400,12 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  inputRef={ffirstName}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
             <Grid
@@ -259,7 +420,12 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  inputRef={fmiddleName}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
             <Grid
@@ -274,7 +440,12 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  inputRef={flastName}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
               </Grid>
             </Grid>
             <Grid
@@ -290,10 +461,10 @@ export default function PanForm() {
               </Grid>
               <Grid item xs={12} lg={8}>
                 <TextField
-                  type={"number"}
                   fullWidth
                   variant="outlined"
                   size="small"
+                  inputRef={mfirstName}
                 />
               </Grid>
             </Grid>
@@ -314,6 +485,7 @@ export default function PanForm() {
                   fullWidth
                   variant="outlined"
                   size="small"
+                  inputRef={mmiddleName}
                 />
               </Grid>
             </Grid>
@@ -334,6 +506,7 @@ export default function PanForm() {
                   fullWidth
                   variant="outlined"
                   size="small"
+                  inputRef={mlastName}
                 />
               </Grid>
             </Grid>
@@ -361,7 +534,7 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <FileUploadPage />
+                <FileUploadPage file={setPanFile} setError={setFileSizeError} />
               </Grid>
             </Grid>
             <Grid
@@ -376,7 +549,10 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <FileUploadPage />
+                <FileUploadPage
+                  setError={setFileSizeError}
+                  file={setAadharFile}
+                />
               </Grid>
             </Grid>
             <Grid
@@ -391,7 +567,7 @@ export default function PanForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <FileUploadPage />
+                <FileUploadPage setError={setFileSizeError} file={setAdFile} />
               </Grid>
             </Grid>
             <Grid
@@ -405,12 +581,17 @@ export default function PanForm() {
                 <Button
                   variant="contained"
                   component="label"
-                  sx={{ backgroundColor: localTheme.darkBg }}
+                  sx={{
+                    backgroundColor: localTheme.darkBg,
+                    textTransform: "none",
+                  }}
                   fullWidth
                   size="large"
                   type="submit"
+                  onClick={handleSubmit}
+                  disabled={loading}
                 >
-                  Submit
+                  {loading ? "Please Wait" : "Submit"}
                 </Button>
               </Grid>
             </Grid>

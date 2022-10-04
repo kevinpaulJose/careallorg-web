@@ -1,10 +1,13 @@
 import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
+import { baseURL } from "../../api/baseURL";
+import { createOrder, postData } from "../../api/calls";
 import { AppContext } from "../../App";
+import { handleUpload } from "../../firebase/functions";
 import { localTheme } from "../theme";
 import FileUploadPage from "./shared/FileUpload";
 
-export default function FastagForm() {
+export default function FastagForm(props) {
   const { width } = useContext(AppContext);
 
   const titles = [
@@ -54,6 +57,7 @@ export default function FastagForm() {
   const [panFile, setPanFile] = useState(null);
   const [aadharFile, setAadharFile] = useState(null);
   const [rcFile, setRcFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const firstName = useRef(null);
   const lastName = useRef(null);
@@ -76,7 +80,7 @@ export default function FastagForm() {
   const [uploadFileError, setUploadFileError] = useState(false);
   const [fileSizeError, setFileSizeError] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const value = {
       firstName: firstName.current.value,
       lastName: lastName.current.value,
@@ -92,6 +96,7 @@ export default function FastagForm() {
       pan_file: panFile,
       reg_cert_file: rcFile,
       rto_location: rto_location.current.value,
+      type: props.props.name,
     };
     let err = false;
     if (value.firstName.trim() === "" || value.firstName.length <= 2) {
@@ -167,6 +172,28 @@ export default function FastagForm() {
       console.log(value);
     } else {
       console.log("success");
+      setLoading(true);
+      value.aadhar_file = await handleUpload(value.aadhar_file, "aadhaar");
+      value.pan_file = await handleUpload(value.pan_file, "pan");
+      value.reg_cert_file = await handleUpload(value.reg_cert_file, "rc");
+      console.log(value);
+      const response = await postData(value, `${baseURL}/fastag`);
+      console.log(response.status);
+      setLoading(false);
+      if (response.status === 200) {
+        const res = await createOrder(response.data.order_id, 200, {
+          email: value.email_id,
+          phone: value.mobile_no,
+        });
+        if (res) {
+          console.log(res);
+        }
+
+        // alert("Order Placed - " + response.data.order_id);
+        // window.location.href = "/";
+      } else {
+        alert("Please try again later");
+      }
     }
   };
 
@@ -504,13 +531,17 @@ export default function FastagForm() {
                 <Button
                   variant="contained"
                   component="label"
-                  sx={{ backgroundColor: localTheme.darkBg }}
+                  sx={{
+                    backgroundColor: localTheme.darkBg,
+                    textTransform: "none",
+                  }}
                   fullWidth
                   size="large"
                   type="submit"
                   onClick={handleSubmit}
+                  disabled={loading}
                 >
-                  Submit
+                  {loading ? "Please Wait" : "Submit"}
                 </Button>
               </Grid>
             </Grid>

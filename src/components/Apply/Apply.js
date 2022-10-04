@@ -43,7 +43,10 @@ export default function Apply(props) {
           sx={{ backgroundColor: localTheme.mainBg, borderRadius: 5 }}
           mt={5}
         >
-          <FormItem type={application_type[params.type].type} name />
+          <FormItem
+            type={application_type[params.type].type}
+            name={application_type[params.type].name}
+          />
         </Grid>
       </Grid>
       <Footer />

@@ -1,10 +1,13 @@
 import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { baseURL } from "../../api/baseURL";
+import { postData } from "../../api/calls";
 import { AppContext } from "../../App";
+import { handleUpload } from "../../firebase/functions";
 import { localTheme } from "../theme";
 import FileUploadPage from "./shared/FileUpload";
 
-export default function DscForm() {
+export default function DscForm(props) {
   const { width } = useContext(AppContext);
 
   const currencies = [
@@ -29,8 +32,109 @@ export default function DscForm() {
     },
   ];
 
+  const [panFile, setPanFile] = useState(null);
+  const [aadharFile, setAadharFile] = useState(null);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const firstName = useRef(null);
+  const lastName = useRef(null);
+  const mobileNo = useRef(null);
+  const emailId = useRef(null);
+
+  const [emailError, setEmailError] = useState(false);
+  const [mobileError, setMobileError] = useState(false);
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+
+  const [uploadFileError, setUploadFileError] = useState(false);
+  const [fileSizeError, setFileSizeError] = useState(false);
+
   const [currency, setCurrency] = useState("Mr");
   const [dscClassItem, setDscClassItem] = useState("Class 3");
+
+  const handleSubmit = async () => {
+    const value = {
+      firstName: firstName.current.value,
+      lastName: lastName.current.value,
+      mobile_no: mobileNo.current.value,
+      email_id: emailId.current.value,
+      paid: "0",
+      aadhar_file: aadharFile,
+      pan_file: panFile,
+      photo_file: photoFile,
+      title: currency,
+      type: props.props.name,
+      dsc_class: dscClass[0].value,
+    };
+    let err = false;
+    if (value.firstName.trim() === "" || value.firstName.length <= 2) {
+      setFirstNameError(true);
+      err = true;
+      console.log("ferror");
+    } else {
+      setFirstNameError(false);
+    }
+    if (value.lastName.trim() === "" || value.lastName.length <= 2) {
+      setLastNameError(true);
+      err = true;
+      console.log("lerror");
+    } else {
+      setLastNameError(false);
+    }
+    if (
+      value.mobile_no.trim() === "" ||
+      value.mobile_no.toString().length !== 10
+    ) {
+      console.log("merror");
+      err = true;
+      setMobileError(true);
+    } else {
+      setMobileError(false);
+    }
+
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value.email_id)) {
+      setEmailError(true);
+      err = true;
+      console.log("eerror");
+    } else {
+      setEmailError(false);
+    }
+    if (
+      value.aadhar_file == null ||
+      value.pan_file == null ||
+      value.photo_file == null
+    ) {
+      err = true;
+      console.log("uerror");
+      console.log(value.pan_file);
+      setUploadFileError(true);
+    } else {
+      setUploadFileError(false);
+    }
+
+    if (err) {
+      console.log("error");
+      console.log(value);
+    } else {
+      console.log("success");
+      setLoading(true);
+      value.aadhar_file = await handleUpload(value.aadhar_file, "aadhaar");
+      value.pan_file = await handleUpload(value.pan_file, "pan");
+      value.photo_file = await handleUpload(value.photo_file, "address");
+      console.log(value);
+      const response = await postData(value, `${baseURL}/digiserv`);
+      console.log(response.status);
+      setLoading(false);
+      if (response.status === 200) {
+        alert("Order Placed - " + response.data.order_id);
+        window.location.href = "/";
+      } else {
+        alert("Please try again later");
+      }
+    }
+  };
+
   const handleChange = (event) => {
     setCurrency(event.target.value);
   };
@@ -80,7 +184,13 @@ export default function DscForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  error={firstNameError}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  inputRef={firstName}
+                />
               </Grid>
             </Grid>
             <Grid
@@ -95,7 +205,13 @@ export default function DscForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <TextField fullWidth variant="outlined" size="small" />
+                <TextField
+                  error={lastNameError}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  inputRef={lastName}
+                />
               </Grid>
             </Grid>
             <Grid
@@ -111,10 +227,12 @@ export default function DscForm() {
               </Grid>
               <Grid item xs={12} lg={8}>
                 <TextField
+                  error={mobileError}
                   type={"number"}
                   fullWidth
                   variant="outlined"
                   size="small"
+                  inputRef={mobileNo}
                 />
               </Grid>
             </Grid>
@@ -131,10 +249,12 @@ export default function DscForm() {
               </Grid>
               <Grid item xs={12} lg={8}>
                 <TextField
+                  error={emailError}
                   type={"email"}
                   fullWidth
                   variant="outlined"
                   size="small"
+                  inputRef={emailId}
                 />
               </Grid>
             </Grid>
@@ -178,7 +298,7 @@ export default function DscForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <FileUploadPage />
+                <FileUploadPage setError={setFileSizeError} file={setPanFile} />
               </Grid>
             </Grid>
             <Grid
@@ -193,7 +313,10 @@ export default function DscForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <FileUploadPage />
+                <FileUploadPage
+                  setError={setFileSizeError}
+                  file={setAadharFile}
+                />
               </Grid>
             </Grid>
             <Grid
@@ -208,7 +331,10 @@ export default function DscForm() {
                 </Typography>
               </Grid>
               <Grid item xs={12} lg={8}>
-                <FileUploadPage />
+                <FileUploadPage
+                  setError={setFileSizeError}
+                  file={setPhotoFile}
+                />
               </Grid>
             </Grid>
             <Grid
@@ -222,12 +348,17 @@ export default function DscForm() {
                 <Button
                   variant="contained"
                   component="label"
-                  sx={{ backgroundColor: localTheme.darkBg }}
+                  sx={{
+                    backgroundColor: localTheme.darkBg,
+                    textTransform: "none",
+                  }}
                   fullWidth
                   size="large"
                   type="submit"
+                  onClick={handleSubmit}
+                  disabled={loading}
                 >
-                  Submit
+                  {loading ? "Please Wait" : "Submit"}
                 </Button>
               </Grid>
             </Grid>
