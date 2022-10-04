@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createContext, Suspense, useEffect, useState } from "react";
 import Home from "./components/Home";
 import Apply from "./components/Apply/Apply";
+import Orders from "./components/Orders/Orders";
 
 export const AppContext = createContext(0);
 
@@ -23,6 +24,7 @@ function App() {
           <Routes>
             <Route path={"/"} element={<Home />} />
             <Route path="/apply/:type" element={<Apply />} />
+            <Route path="/orders/:orderid/:orderref" element={<Orders />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>

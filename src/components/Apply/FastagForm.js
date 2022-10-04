@@ -1,7 +1,7 @@
 import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { baseURL } from "../../api/baseURL";
-import { createOrder, postData } from "../../api/calls";
+import { createOrder, getData, postData } from "../../api/calls";
 import { AppContext } from "../../App";
 import { handleUpload } from "../../firebase/functions";
 import { localTheme } from "../theme";
@@ -80,6 +80,15 @@ export default function FastagForm(props) {
   const [uploadFileError, setUploadFileError] = useState(false);
   const [fileSizeError, setFileSizeError] = useState(false);
 
+  const [amount, setAmount] = useState(0);
+  useEffect(() => {
+    setLoading(true);
+    getData(`${baseURL}/amount`).then((res) => {
+      console.log(res.data[0][props.props.type]);
+      setAmount(res.data[0][props.props.type]);
+      setLoading(false);
+    });
+  }, [props.props.type]);
   const handleSubmit = async () => {
     const value = {
       firstName: firstName.current.value,
@@ -181,16 +190,10 @@ export default function FastagForm(props) {
       console.log(response.status);
       setLoading(false);
       if (response.status === 200) {
-        const res = await createOrder(response.data.order_id, 200, {
+        createOrder(response.data.order_id, amount, {
           email: value.email_id,
           phone: value.mobile_no,
         });
-        if (res) {
-          console.log(res);
-        }
-
-        // alert("Order Placed - " + response.data.order_id);
-        // window.location.href = "/";
       } else {
         alert("Please try again later");
       }

@@ -7,7 +7,7 @@ import FileUploadPage from "./shared/FileUpload";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { handleUpload } from "../../firebase/functions";
 import { baseURL } from "../../api/baseURL";
-import { postData } from "../../api/calls";
+import { createOrder, getData, postData } from "../../api/calls";
 
 export default function PanForm(props) {
   const { width } = useContext(AppContext);
@@ -65,6 +65,15 @@ export default function PanForm(props) {
   const [uploadFileError, setUploadFileError] = useState(false);
   const [fileSizeError, setFileSizeError] = useState(false);
 
+  const [amount, setAmount] = useState(0);
+  useEffect(() => {
+    setLoading(true);
+    getData(`${baseURL}/amount`).then((res) => {
+      console.log(res.data[0][props.props.type]);
+      setAmount(res.data[0][props.props.type]);
+      setLoading(false);
+    });
+  }, [props.props.type]);
   const handleSubmit = async () => {
     const value = {
       a_firstName: afirstName.current.value,
@@ -146,8 +155,10 @@ export default function PanForm(props) {
       console.log(response.status);
       setLoading(false);
       if (response.status === 200) {
-        alert("Order Placed - " + response.data.order_id);
-        window.location.href = "/";
+        createOrder(response.data.order_id, amount, {
+          email: value.email_id,
+          phone: value.a_mobile_no,
+        });
       } else {
         alert("Please try again later");
       }

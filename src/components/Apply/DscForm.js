@@ -1,7 +1,7 @@
 import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { baseURL } from "../../api/baseURL";
-import { postData } from "../../api/calls";
+import { createOrder, getData, postData } from "../../api/calls";
 import { AppContext } from "../../App";
 import { handleUpload } from "../../firebase/functions";
 import { localTheme } from "../theme";
@@ -52,7 +52,15 @@ export default function DscForm(props) {
 
   const [currency, setCurrency] = useState("Mr");
   const [dscClassItem, setDscClassItem] = useState("Class 3");
-
+  const [amount, setAmount] = useState(0);
+  useEffect(() => {
+    setLoading(true);
+    getData(`${baseURL}/amount`).then((res) => {
+      console.log(res.data[0][props.props.type]);
+      setAmount(res.data[0][props.props.type]);
+      setLoading(false);
+    });
+  }, [props.props.type]);
   const handleSubmit = async () => {
     const value = {
       firstName: firstName.current.value,
@@ -127,8 +135,10 @@ export default function DscForm(props) {
       console.log(response.status);
       setLoading(false);
       if (response.status === 200) {
-        alert("Order Placed - " + response.data.order_id);
-        window.location.href = "/";
+        createOrder(response.data.order_id, amount, {
+          email: value.email_id,
+          phone: value.mobile_no,
+        });
       } else {
         alert("Please try again later");
       }

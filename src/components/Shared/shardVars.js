@@ -39,3 +39,18 @@ export const application_type = {
 };
 
 export const gender = ["Mr", "Mrs", "Ms"];
+
+export function getApp(order_id) {
+  let temp = order_id.slice(0, 3);
+  // console.log(temp);
+  switch (temp) {
+    case "PAN":
+      return "pan";
+    case "FAS":
+      return "fastag";
+    case "DIG":
+      return "digiserv";
+    default:
+      return "fastag";
+  }
+}
