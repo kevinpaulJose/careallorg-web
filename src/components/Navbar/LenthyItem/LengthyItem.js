@@ -37,6 +37,11 @@ export default function LengthyItem(props) {
                   behavior: "smooth",
                 });
               }
+              if (v.value === "track") {
+                props.trackReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
               props.handleSelect(v.value);
             }}
           >

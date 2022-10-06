@@ -140,8 +140,10 @@ export default function FastagData(props) {
           v.selected = false;
           setData.push(v);
         });
-        setApiData(setData);
-        console.log(setData);
+        setApiData(
+          setData.sort((a, b) => b.last_modified.localeCompare(a.last_modified))
+        );
+
         setLoading(false);
       })
       .catch((err) => {
@@ -164,8 +166,9 @@ export default function FastagData(props) {
           v.selected = false;
           setData.push(v);
         });
-        setApiData(setData);
-        console.log(setData);
+        setApiData(
+          setData.sort((a, b) => b.last_modified.localeCompare(a.last_modified))
+        );
         setLoading(false);
       })
       .catch((err) => {
@@ -263,6 +266,9 @@ export default function FastagData(props) {
                   <Typography>Select</Typography>
                 </TableCell>
                 <TableCell>
+                  <Typography fontWeight="bold">ID</Typography>
+                </TableCell>
+                <TableCell>
                   <Typography fontWeight="bold">Name</Typography>
                 </TableCell>
                 <TableCell>
@@ -313,6 +319,7 @@ export default function FastagData(props) {
                       checked={row.selected}
                     />
                   </TableCell>
+                  <TableCell>{`${row.order_id}`}</TableCell>
                   <TableCell>
                     {`${row.title}. ${row.firstName} ${row.lastName}`}
                   </TableCell>

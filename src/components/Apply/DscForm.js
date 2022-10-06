@@ -130,7 +130,7 @@ export default function DscForm(props) {
       value.aadhar_file = await handleUpload(value.aadhar_file, "aadhaar");
       value.pan_file = await handleUpload(value.pan_file, "pan");
       value.photo_file = await handleUpload(value.photo_file, "address");
-      console.log(value);
+      // alert(value.mobile_no);
       const response = await postData(value, `${baseURL}/digiserv`);
       console.log(response.status);
       setLoading(false);

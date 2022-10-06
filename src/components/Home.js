@@ -10,6 +10,7 @@ import NavBar from "./Navbar/NavBar";
 import DscProducts from "./Dsc/DscProducts";
 import Contact from "./Contact/Contact";
 import Footer from "./Footer/Footer";
+import Track from "./Track/Track";
 
 export default function Fastag() {
   const fastagProductRef = useRef(null);
@@ -17,6 +18,7 @@ export default function Fastag() {
   const panReference = useRef(null);
   const dscReference = useRef(null);
   const contactReference = useRef(null);
+  const trackReference = useRef(null);
   return (
     <>
       <NavBar
@@ -24,6 +26,7 @@ export default function Fastag() {
         panReference={panReference}
         dscReference={dscReference}
         contactReference={contactReference}
+        trackReference={trackReference}
       />
       <Stack style={{ backgroundColor: localTheme.mainBg }} spacing={10}>
         <TopComponent
@@ -50,6 +53,9 @@ export default function Fastag() {
         </div>
         <div ref={contactReference}>
           <Contact />
+        </div>
+        <div ref={trackReference}>
+          <Track />
         </div>
         <Footer />
       </Stack>

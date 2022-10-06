@@ -6,4 +6,5 @@ export const localTheme = {
   minBold: "#262626",
   darkBg: "#07448e",
   lighterBg: "#f3f8ff",
+  warning: "#ffb3bb",
 };

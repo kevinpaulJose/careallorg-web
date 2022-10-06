@@ -42,6 +42,7 @@ export default function NavBar(props) {
             reference={props.reference}
             contactReference={props.contactReference}
             dscReference={props.dscReference}
+            trackReference={props.trackReference}
           />
         </Box>
       ) : (
@@ -56,6 +57,7 @@ export default function NavBar(props) {
             reference={props.reference}
             contactReference={props.contactReference}
             dscReference={props.dscReference}
+            trackReference={props.trackReference}
           />
         </>
 

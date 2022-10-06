@@ -9,6 +9,7 @@ import Selection from "./shared/Selection";
 import { useState } from "react";
 import PanData from "./PanData";
 import DscData from "./DscData";
+import Settings from "./Settings";
 
 export default function Tabs() {
   const [value, setValue] = React.useState("1");
@@ -41,7 +42,9 @@ export default function Tabs() {
           <Selection selected={selected} setSelected={setSelected} />
           <DscData selected={selected} />
         </TabPanel>
-        <TabPanel value="4">Settings</TabPanel>
+        <TabPanel value="4">
+          <Settings />
+        </TabPanel>
       </TabContext>
     </Box>
   );

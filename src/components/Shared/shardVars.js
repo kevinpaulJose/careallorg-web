@@ -43,7 +43,7 @@ export const gender = ["Mr", "Mrs", "Ms"];
 export function getApp(order_id) {
   let temp = order_id.slice(0, 3);
   // console.log(temp);
-  switch (temp) {
+  switch (temp.toUpperCase()) {
     case "PAN":
       return "pan";
     case "FAS":

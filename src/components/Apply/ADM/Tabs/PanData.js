@@ -130,7 +130,9 @@ export default function PanData(props) {
           v.selected = false;
           setData.push(v);
         });
-        setApiData(setData);
+        setApiData(
+          setData.sort((a, b) => b.last_modified.localeCompare(a.last_modified))
+        );
         console.log(setData);
         setLoading(false);
       })
@@ -154,7 +156,9 @@ export default function PanData(props) {
           v.selected = false;
           setData.push(v);
         });
-        setApiData(setData);
+        setApiData(
+          setData.sort((a, b) => b.last_modified.localeCompare(a.last_modified))
+        );
         console.log(setData);
         setLoading(false);
       })

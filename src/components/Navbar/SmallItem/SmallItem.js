@@ -50,6 +50,11 @@ export default function SmallItem(props) {
                   behavior: "smooth",
                 });
               }
+              if (v.value === "track") {
+                props.trackReference.current.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
             }}
           >
             <Link

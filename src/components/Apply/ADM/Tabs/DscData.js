@@ -129,7 +129,9 @@ export default function DscData(props) {
           v.selected = false;
           setData.push(v);
         });
-        setApiData(setData);
+        setApiData(
+          setData.sort((a, b) => b.last_modified.localeCompare(a.last_modified))
+        );
         console.log(setData);
         setLoading(false);
       })
@@ -153,7 +155,9 @@ export default function DscData(props) {
           v.selected = false;
           setData.push(v);
         });
-        setApiData(setData);
+        setApiData(
+          setData.sort((a, b) => b.last_modified.localeCompare(a.last_modified))
+        );
         console.log(setData);
         setLoading(false);
       })
@@ -252,6 +256,9 @@ export default function DscData(props) {
                   <Typography>Select</Typography>
                 </TableCell>
                 <TableCell>
+                  <Typography fontWeight="bold">ID</Typography>
+                </TableCell>
+                <TableCell>
                   <Typography fontWeight="bold">Name</Typography>
                 </TableCell>
                 <TableCell>
@@ -288,10 +295,11 @@ export default function DscData(props) {
                       checked={row.selected}
                     />
                   </TableCell>
+                  <TableCell>{`${row.order_id}`}</TableCell>
                   <TableCell>
                     {`${row.title}. ${row.firstName} ${row.lastName}`}
                   </TableCell>
-                  <TableCell>{`${row.a_mobile_no}`}</TableCell>
+                  <TableCell>{`${row.mobile_no}`}</TableCell>
                   <TableCell>{`${row.email_id}`}</TableCell>
                   <TableCell>{`${row.status}`}</TableCell>
                   <TableCell>
