@@ -55,13 +55,13 @@ export default function Apply(props) {
 }
 
 const FormItem = (props) => {
-  switch (props.type) {
+  switch (props.type.split("_")[0]) {
     case "digiserv":
-      return <DscForm props={props} />;
+      return <DscForm {...props} />;
     case "fastag":
-      return <FastagForm props={props} />;
+      return <FastagForm {...props} />;
     case "pan":
-      return <PanForm props={props} />;
+      return <PanForm {...props} />;
     default:
       return <></>;
   }

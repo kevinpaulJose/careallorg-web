@@ -83,12 +83,22 @@ export default function FastagForm(props) {
   const [amount, setAmount] = useState(0);
   useEffect(() => {
     setLoading(true);
-    getData(`${baseURL}/amount`).then((res) => {
-      console.log(res.data[0][props.props.type]);
-      setAmount(res.data[0][props.props.type]);
-      setLoading(false);
-    });
-  }, [props.props.type]);
+    getData(`${baseURL}/amount`)
+      .then((res) => {
+        const type = props.type.split("_");
+        console.log(
+          res.data[0][type[0]][type[1]][
+            classesItem.split(" ").join("").toLowerCase()
+          ]
+        );
+        setAmount(res.data[0][props.type]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        alert("Error occoured");
+        setLoading(false);
+      });
+  }, [props.type, classesItem]);
   const handleSubmit = async () => {
     const value = {
       firstName: firstName.current.value,
@@ -105,7 +115,7 @@ export default function FastagForm(props) {
       pan_file: panFile,
       reg_cert_file: rcFile,
       rto_location: rto_location.current.value,
-      type: props.props.name,
+      type: props.name,
     };
     let err = false;
     if (value.firstName.trim() === "" || value.firstName.length <= 2) {
@@ -188,12 +198,13 @@ export default function FastagForm(props) {
       console.log(value);
       const response = await postData(value, `${baseURL}/fastag`);
       console.log(response.status);
-      setLoading(false);
+
       if (response.status === 200) {
         createOrder(response.data.order_id, amount, {
           email: value.email_id,
           phone: value.mobile_no,
         });
+        setLoading(false);
       } else {
         alert("Please try again later");
       }

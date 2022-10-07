@@ -56,11 +56,12 @@ export default function DscForm(props) {
   useEffect(() => {
     setLoading(true);
     getData(`${baseURL}/amount`).then((res) => {
-      console.log(res.data[0][props.props.type]);
-      setAmount(res.data[0][props.props.type]);
+      const type = props.type.split("_");
+      console.log(res.data[0][type[0]][type[1]]);
+      setAmount(res.data[0][props.type]);
       setLoading(false);
     });
-  }, [props.props.type]);
+  }, [props.type]);
   const handleSubmit = async () => {
     const value = {
       firstName: firstName.current.value,
@@ -72,7 +73,7 @@ export default function DscForm(props) {
       pan_file: panFile,
       photo_file: photoFile,
       title: currency,
-      type: props.props.name,
+      type: props.name,
       dsc_class: dscClass[0].value,
     };
     let err = false;

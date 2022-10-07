@@ -2,42 +2,95 @@ import {
   Button,
   CircularProgress,
   FormControl,
+  Grid,
   InputAdornment,
   InputLabel,
   OutlinedInput,
   Stack,
+  Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { baseURL } from "../../../../api/baseURL";
 import { getData, postData } from "../../../../api/calls";
+import TextInputs from "./shared/TextInputs";
 
 export default function Settings() {
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [currentData, setCurrentData] = useState({
-    fastag: 0,
+    fastag: {
+      sbi: {
+        class4: 0,
+        class5: 0,
+        class6: 0,
+        class7: 0,
+        class12: 0,
+      },
+      icici: {
+        class4: 0,
+        class5: 0,
+        class6: 0,
+        class7: 0,
+        class12: 0,
+      },
+    },
     pan: 0,
-    digiserv: 0,
-    id: "1",
-    _id: "234",
+    digiserv: {
+      individual: 0,
+      both: 0,
+    },
   });
-  const fastagRef = useRef(null);
+
+  const fastagRef_sbi_class4 = useRef(null);
+  const fastagRef_sbi_class5 = useRef(null);
+  const fastagRef_sbi_class6 = useRef(null);
+  const fastagRef_sbi_class7 = useRef(null);
+  const fastagRef_sbi_class12 = useRef(null);
+  const fastagRef_icici_class4 = useRef(null);
+  const fastagRef_icici_class5 = useRef(null);
+  const fastagRef_icici_class6 = useRef(null);
+  const fastagRef_icici_class7 = useRef(null);
+  const fastagRef_icici_class12 = useRef(null);
+
   const panRef = useRef(null);
-  const digiRef = useRef(null);
+  const digiRef_individual = useRef(null);
+  const digiRef_both = useRef(null);
+
+  const types = {
+    fastag: [
+      { name: "FASTag_SBI_Class 4", ref: fastagRef_sbi_class4 },
+      { name: "FASTag_SBI_Class 5", ref: fastagRef_sbi_class5 },
+      { name: "FASTag_SBI_Class 6", ref: fastagRef_sbi_class6 },
+      { name: "FASTag_SBI_Class 7", ref: fastagRef_sbi_class7 },
+      { name: "FASTag_SBI_Class 12", ref: fastagRef_sbi_class12 },
+      { name: "FASTag_ICICI_Class 4", ref: fastagRef_icici_class4 },
+      { name: "FASTag_ICICI_Class 5", ref: fastagRef_icici_class5 },
+      { name: "FASTag_ICICI_Class 6", ref: fastagRef_icici_class6 },
+      { name: "FASTag_ICICI_Class 7", ref: fastagRef_icici_class7 },
+      { name: "FASTag_ICICI_Class 12", ref: fastagRef_icici_class12 },
+    ],
+    pan: [{ name: "PAN", ref: panRef }],
+    digiserv: [
+      { name: "DigiServ_Individual", ref: digiRef_individual },
+      { name: "DigiServ_Both", ref: digiRef_both },
+    ],
+  };
 
   const updateValues = async () => {
     setUpdating(true);
     const value = {
-      fastag: parseFloat(currentData.fastag),
-      pan: parseFloat(currentData.pan),
-      digiserv: parseFloat(currentData.digiserv),
+      fastag: currentData.fastag,
+      pan: currentData.pan,
+      digiserv: currentData.digiserv,
     };
+    console.log(value);
     postData(value, `${baseURL}/amount`)
       .then((response) => {
         if (response.status === 204) {
-          fastagRef.current.value = "";
+          types.fastag.forEach((v) => (v.ref.current.value = ""));
+          types.digiserv.forEach((v) => (v.ref.current.value = ""));
           panRef.current.value = "";
-          digiRef.current.value = "";
+
           setUpdating(false);
         } else {
           alert("Error Occured");
@@ -52,7 +105,20 @@ export default function Settings() {
   };
 
   const handleChange = (event, value) => {
-    setCurrentData({ ...currentData, [value]: event.target.value });
+    const key = value.split("_");
+    if (key[0] === "fastag") {
+      let temp = currentData;
+      temp[key[0]][key[1]][key[2]] = parseFloat(event.target.value);
+      console.log(temp);
+      setCurrentData(temp);
+    } else if (key[0] === "pan") {
+      setCurrentData({ ...currentData, pan: parseFloat(event.target.value) });
+    } else {
+      let temp = currentData;
+      temp[key[0]][key[1]] = parseFloat(event.target.value);
+      console.log(temp);
+      setCurrentData(temp);
+    }
   };
 
   useEffect(() => {
@@ -74,48 +140,80 @@ export default function Settings() {
         <CircularProgress />
       ) : (
         <Stack>
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel htmlFor="outlined-adornment-amount">FASTag</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-amount"
-              startAdornment={
-                <InputAdornment position="start">₹</InputAdornment>
-              }
-              label="FASTag"
-              inputRef={fastagRef}
-              type="number"
-              placeholder={currentData.fastag}
-              onChange={(e) => handleChange(e, "fastag")}
-            />
-          </FormControl>
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel htmlFor="outlined-adornment-amount">PAN</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-amount"
-              startAdornment={
-                <InputAdornment position="start">₹</InputAdornment>
-              }
-              label="PAN"
-              inputRef={panRef}
-              type="number"
-              placeholder={currentData.pan}
-              onChange={(e) => handleChange(e, "pan")}
-            />
-          </FormControl>
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel htmlFor="outlined-adornment-amount">DSC</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-amount"
-              startAdornment={
-                <InputAdornment position="start">₹</InputAdornment>
-              }
-              label="DSC"
-              inputRef={digiRef}
-              type="number"
-              placeholder={currentData.digiserv}
-              onChange={(e) => handleChange(e, "digiserv")}
-            />
-          </FormControl>
+          <Typography fontWeight={"bold"} fontSize={18} variant="body2">
+            FASTag
+          </Typography>
+          <Grid container mt={2}>
+            {types.fastag.map((v, _) => {
+              const placeholderArr = v.name.split("_");
+              const placeholderValue =
+                currentData[placeholderArr[0].toLocaleLowerCase()][
+                  placeholderArr[1].toLocaleLowerCase()
+                ][placeholderArr[2].split(" ").join("").toLocaleLowerCase()];
+              const type = `${placeholderArr[0].toLocaleLowerCase()}_${placeholderArr[1].toLocaleLowerCase()}_${placeholderArr[2]
+                .split(" ")
+                .join("")
+                .toLocaleLowerCase()}`;
+              return (
+                <Grid item key={type}>
+                  <TextInputs
+                    label={`${v.name.split("_")[1]} ${v.name.split("_")[2]}`}
+                    reference={v.ref}
+                    placeholder={placeholderValue}
+                    type={type}
+                    handleChange={handleChange}
+                  />
+                </Grid>
+              );
+            })}
+          </Grid>
+
+          <Typography fontWeight={"bold"} fontSize={18} variant="body2">
+            DSC
+          </Typography>
+          <Grid container mt={2}>
+            {types.digiserv.map((v, _) => {
+              const placeholderArr = v.name.split("_");
+              const placeholderValue =
+                currentData[placeholderArr[0].toLocaleLowerCase()][
+                  placeholderArr[1].toLocaleLowerCase()
+                ];
+              const type = `${placeholderArr[0].toLocaleLowerCase()}_${placeholderArr[1].toLocaleLowerCase()}`;
+              return (
+                <Grid item key={type}>
+                  <TextInputs
+                    label={`${v.name.split("_")[1]}`}
+                    reference={v.ref}
+                    placeholder={placeholderValue}
+                    type={type}
+                    handleChange={handleChange}
+                  />
+                </Grid>
+              );
+            })}
+          </Grid>
+
+          <Typography fontWeight={"bold"} fontSize={18} variant="body2">
+            PAN
+          </Typography>
+          <Grid container mt={2}>
+            {types.pan.map((v, _) => {
+              const placeholderValue = currentData["pan"];
+              const type = `pan`;
+              return (
+                <Grid item key={type}>
+                  <TextInputs
+                    label={`${"pan"}`}
+                    reference={v.ref}
+                    placeholder={placeholderValue}
+                    type={type}
+                    handleChange={handleChange}
+                  />
+                </Grid>
+              );
+            })}
+          </Grid>
+
           <Button
             sx={{
               textTransform: "none",

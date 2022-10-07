@@ -69,11 +69,12 @@ export default function PanForm(props) {
   useEffect(() => {
     setLoading(true);
     getData(`${baseURL}/amount`).then((res) => {
-      console.log(res.data[0][props.props.type]);
-      setAmount(res.data[0][props.props.type]);
+      const type = props.type.split("_");
+      console.log(res.data[0][type[0]]);
+      setAmount(res.data[0][props.type]);
       setLoading(false);
     });
-  }, [props.props.type]);
+  }, [props.type]);
   const handleSubmit = async () => {
     const value = {
       a_firstName: afirstName.current.value,
@@ -98,7 +99,7 @@ export default function PanForm(props) {
       aadhar_file: aadharFile,
       pan_file: panFile,
       address_file: adFile,
-      type: props.props.name,
+      type: props.name,
       title: currency,
     };
     let err = false;
