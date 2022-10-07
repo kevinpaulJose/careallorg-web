@@ -58,7 +58,7 @@ export default function DscForm(props) {
     getData(`${baseURL}/amount`).then((res) => {
       const type = props.type.split("_");
       console.log(res.data[0][type[0]][type[1]]);
-      setAmount(res.data[0][props.type]);
+      setAmount(res.data[0][type[0]][type[1]]);
       setLoading(false);
     });
   }, [props.type]);

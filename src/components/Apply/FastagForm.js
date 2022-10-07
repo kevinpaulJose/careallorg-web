@@ -91,7 +91,11 @@ export default function FastagForm(props) {
             classesItem.split(" ").join("").toLowerCase()
           ]
         );
-        setAmount(res.data[0][props.type]);
+        setAmount(
+          res.data[0][type[0]][type[1]][
+            classesItem.split(" ").join("").toLowerCase()
+          ]
+        );
         setLoading(false);
       })
       .catch((err) => {
@@ -200,6 +204,7 @@ export default function FastagForm(props) {
       console.log(response.status);
 
       if (response.status === 200) {
+        alert(amount);
         createOrder(response.data.order_id, amount, {
           email: value.email_id,
           phone: value.mobile_no,
