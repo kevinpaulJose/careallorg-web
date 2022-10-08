@@ -2,6 +2,7 @@ import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { baseURL } from "../../api/baseURL";
 import { createOrder, getData, postData } from "../../api/calls";
+import { sendEmail } from "../../api/email";
 import { AppContext } from "../../App";
 import { handleUpload } from "../../firebase/functions";
 import { localTheme } from "../theme";
@@ -134,14 +135,40 @@ export default function DscForm(props) {
       // alert(value.mobile_no);
       const response = await postData(value, `${baseURL}/digiserv`);
       console.log(response.status);
-      setLoading(false);
+
       if (response.status === 200) {
-        createOrder(response.data.order_id, amount, {
+        let order_details = await createOrder(response.data.order_id, amount, {
           email: value.email_id,
           phone: value.mobile_no,
         });
+        if (order_details.status === 200) {
+          console.log(order_details.data);
+          await sendEmail({
+            order_id: response.data.order_id,
+            product: value.type,
+            to_email: value.email_id,
+            type: "customer",
+            to_name: value.firstName,
+            payment_link: order_details.data.payment_link,
+          });
+          await sendEmail({
+            order_id: response.data.order_id,
+            product: value.type,
+            to_email: value.email_id,
+            type: "store",
+            to_name: value.firstName,
+            payment_link: order_details.data.payment_link,
+          });
+          window.location.href = order_details.data.payment_link;
+          setLoading(false);
+        } else {
+          alert("Please try again later");
+          console.log(order_details.data);
+          setLoading(false);
+        }
       } else {
         alert("Please try again later");
+        setLoading(false);
       }
     }
   };

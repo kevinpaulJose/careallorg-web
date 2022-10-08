@@ -8,6 +8,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { handleUpload } from "../../firebase/functions";
 import { baseURL } from "../../api/baseURL";
 import { createOrder, getData, postData } from "../../api/calls";
+import { sendEmail } from "../../api/email";
 
 export default function PanForm(props) {
   const { width } = useContext(AppContext);
@@ -154,14 +155,40 @@ export default function PanForm(props) {
       console.log(value);
       const response = await postData(value, `${baseURL}/pan`);
       console.log(response.status);
-      setLoading(false);
+
       if (response.status === 200) {
-        createOrder(response.data.order_id, amount, {
+        let order_details = await createOrder(response.data.order_id, amount, {
           email: value.email_id,
           phone: value.a_mobile_no,
         });
+        if (order_details.status === 200) {
+          console.log(order_details.data);
+          await sendEmail({
+            order_id: response.data.order_id,
+            product: value.type,
+            to_email: value.email_id,
+            type: "customer",
+            to_name: value.a_firstName,
+            payment_link: order_details.data.payment_link,
+          });
+          await sendEmail({
+            order_id: response.data.order_id,
+            product: value.type,
+            to_email: value.email_id,
+            type: "store",
+            to_name: value.a_firstName,
+            payment_link: order_details.data.payment_link,
+          });
+          window.location.href = order_details.data.payment_link;
+          setLoading(false);
+        } else {
+          alert("Please try again later");
+          console.log(order_details.data);
+          setLoading(false);
+        }
       } else {
         alert("Please try again later");
+        setLoading(false);
       }
     }
   };
